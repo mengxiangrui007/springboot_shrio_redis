@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.abroad.uc.dao.IGroupMapper">
+		<!-- 集团Domain -->
+	<resultMap type="com.abroad.uc.domain.Group" id="groupDomain">
+		<result property="id" column="id" />
+		<result property="pid" column="pid" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="note" column="note" />
+	</resultMap>
+	<!-- 通过ID查询集团的信息 -->
+	<select id="findById" resultMap="groupDomain">
+	SELECT 
+		id,
+		pid,
+		code,
+		name,
+		note
+	FROM
+		hr_group
+	WHERE
+		id = #{id}
+	AND
+		dr = 0
+	</select>
+	<!-- 查询当前所拥有的子集团 -->
+	<select id="queryGroupIDsChildren"  resultType="Long">
+	SELECT
+		id
+	FROM
+		hr_group
+	WHERE
+		FIND_IN_SET(id, queryChildrenGroup(#{groupId}))
+	AND dr = 0
+	</select>
+	<!-- 查询所用的公司信息 -->
+	<select id="queryGroupChildren" resultMap="groupDomain">
+	SELECT
+		id,
+		pid,
+		code,
+		name,
+		note
+	FROM
+		hr_group
+	WHERE
+		dr = 0
+	</select>
+</mapper>

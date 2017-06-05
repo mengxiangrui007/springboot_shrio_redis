@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.abroad.uc.dao.ICountryMapper">
+	<insert id="insertCountry">
+ 		INSERT INTO bd_country(
+ 			countrycode,
+ 			statecode,
+			citycode,
+			nameCN
+		) 
+			VALUES
+		 <foreach collection="countryRegionTests" item="item" index="index" separator=",">
+		(#{item.countrycode},#{item.statecode},#{item.citycode},#{item.nameCN})	
+		 </foreach> 
+	</insert>
+	<update id="updateCountry">
+		<foreach collection="countryRegionTests" item="item" index="index" separator=";"
+		  open="" close="">
+		 	update bd_country set
+				nameEN = #{item.nameEN}
+			WHERE
+			1=1
+				<if test="item.countrycode != null and item.statecode == null and item.citycode == null">
+					AND
+						countrycode = #{item.countrycode} AND statecode is null AND citycode is null
+				</if>
+				<if  test="item.countrycode == null and item.statecode != null and item.citycode == null">
+					AND
+						 countrycode is null AND statecode = #{item.statecode} AND citycode is null
+				</if>
+				<if  test="item.countrycode == null and item.statecode == null and item.citycode != null">
+					AND
+						 countrycode is null AND statecode is null AND citycode = #{item.citycode}
+				</if>
+				<if  test="item.countrycode != null and item.statecode != null and item.citycode == null">
+					AND
+						countrycode = #{item.countrycode} AND statecode = #{item.statecode} AND citycode is null 
+				</if>
+				<if  test="item.countrycode == null and item.statecode != null and item.citycode != null">
+					AND
+						 countrycode is null AND  statecode = #{item.statecode}  AND citycode = #{item.citycode}
+				</if>
+				<if  test="item.countrycode != null and item.statecode == null and item.citycode != null">
+					AND
+						countrycode = #{item.countrycode} AND statecode is null  AND citycode = #{item.citycode}
+				</if>
+				<if test="item.countrycode != null and item.statecode != null and item.citycode != null">
+					AND
+						countrycode = #{item.countrycode} AND statecode =  #{item.statecode}  AND citycode = #{item.citycode}
+				</if>
+				<if test="item.countrycode == null and item.statecode == null and item.citycode == null">
+					AND
+						countrycode = '-1'
+				</if>
+		</foreach>
+	</update>
+	<update id="update">
+		 	update bd_country set
+				nameTW = #{nameTW}
+			WHERE
+			1=1
+				<if test="countrycode != null and statecode == null and citycode == null">
+					AND
+						countrycode = #{countrycode} AND statecode is null AND citycode is null
+				</if>
+				<if  test="countrycode == null and statecode != null and citycode == null">
+					AND
+						 countrycode is null AND statecode = #{statecode} AND citycode is null
+				</if>
+				<if  test="countrycode == null and statecode == null and citycode != null">
+					AND
+						 countrycode is null AND statecode is null AND citycode = #{citycode}
+				</if>
+				<if  test="countrycode != null and statecode != null and citycode == null">
+					AND
+						countrycode = #{countrycode} AND statecode = #{statecode} AND citycode is null 
+				</if>
+				<if  test="countrycode == null and statecode != null and citycode != null">
+					AND
+						 countrycode is null AND  statecode = #{statecode}  AND citycode = #{citycode}
+				</if>
+				<if  test="countrycode != null and statecode == null and citycode != null">
+					AND
+						countrycode = #{countrycode} AND statecode is null  AND citycode = #{citycode}
+				</if>
+				<if test="countrycode != null and statecode != null and citycode != null">
+					AND
+						countrycode = #{countrycode} AND statecode =  #{statecode}  AND citycode = #{citycode}
+				</if>
+				<if test="countrycode == null and statecode == null and citycode == null">
+					AND
+						countrycode = '-1'
+				</if>
+	</update>
+</mapper>

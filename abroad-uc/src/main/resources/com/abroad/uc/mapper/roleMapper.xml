@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.abroad.uc.dao.IRoleMapper">
+	<resultMap type="com.abroad.uc.domain.Role" id="roleDomain">
+		<result property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="type" column="type"/>
+		<result property="groupId" column="groupId" />
+		<result property="orgId" column="orgId" />
+		<result property="note" column="note" />
+	</resultMap>
+	<!-- 查询角色根据用户ID -->
+	<select id="queryRoleListByUserId" resultMap="roleDomain">
+		SELECT
+			id,
+			name,
+			code,
+			type,
+			pk_hr_group groupId,
+			pk_hr_org orgId
+		FROM
+			hr_role
+		WHERE
+			id IN (
+				SELECT
+					hr_user_role.pk_hr_role
+				FROM
+					hr_user_role hr_user_role
+				WHERE
+					hr_user_role.pk_hr_user = #{userId}
+			)
+		AND
+			dr = 0
+	</select>
+	<!-- 查询用户角色名称是否存在 -->
+	<select id="queryRoleByName" resultType="int">
+		SELECT 
+			count(id)
+		FROM
+			hr_role
+		WHERE
+			name = #{name}
+		AND
+			pk_hr_group = #{groupId}
+		AND
+			pk_hr_org = #{orgId}
+	</select>
+	<!-- 查询用户角色主键集合 -->
+	<select id="queryRoleIdsByUserId" resultType="Long">
+		SELECT
+			id
+		FROM
+			hr_role
+		WHERE
+			id IN (
+				SELECT
+					hr_user_role.pk_hr_role
+				FROM
+					hr_user_role hr_user_role
+				WHERE
+					hr_user_role.pk_hr_user = #{userId}
+			)
+		AND
+			dr = 0
+	</select>
+	<!-- 添加一个角色信息 -->
+	<insert id="insert">
+		INSERT INTO hr_role (
+			id,
+			code,
+			name,
+			type,
+			pk_hr_group,
+			pk_hr_org,
+			pk_hr_user,
+			cratetime,
+			note
+		)
+		VALUES
+		(
+			#{id},
+			#{code},
+			#{name},
+			#{type},
+			#{groupId},
+			#{orgId},	
+			#{ope.pk_hr_user},
+			#{ope.cratetime},
+			#{note}
+		)
+	</insert>
+</mapper>

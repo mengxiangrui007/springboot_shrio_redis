@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.abroad.uc.dao.IUserMapper">
+	<resultMap type="com.abroad.uc.domain.User" id="userDomain">
+		<result property="id" column="id" />
+		<result property="code" column="code" />
+	    <result property="account" column="account" />
+	    <result property="mobile" column="mobile"/>
+	    <result property="password" column="password"/>
+	    <result property="email" column="email"/>
+	    <result property="cratetime" column="cratetime"/>
+		<result property="name" column="name" />
+		<result property="islocked" column="islocked" />
+		<result property="salt" column="salt" />
+		<result property="groupId" column="pk_hr_group" />
+		<result property="orgId" column="pk_hr_org" />
+	</resultMap>
+	<!-- 查询登录用户 -->
+	<select id="login" resultMap="userDomain">
+		SELECT 
+			id,
+			code,
+			account,
+			password,
+			name,
+			islocked,
+			salt,
+			pk_hr_group,
+			pk_hr_org
+		FROM 
+			hr_user
+		WHERE
+			account = #{username}
+		AND
+			dr = 0
+	</select>
+	<!-- 添加用户 -->
+	<insert id="insert">
+		INSERT INTO hr_user(
+			id,
+			code,
+			account,
+			name,
+			mobile,
+			email,
+			islocked,
+			salt,
+			password,
+			pk_hr_userdetail,
+			pk_hr_group,
+			pk_hr_org,
+			pk_hr_user,
+			cratetime,
+			note
+		) 
+			VALUES
+		(
+			#{id},
+			#{code},
+			#{account},
+			#{name},
+			#{mobile},
+			#{email},
+			#{islocked},
+			#{salt},
+			#{password},
+			#{pk_hr_userdetail},
+			#{pk_hr_group},
+			#{pk_hr_org},
+			#{ope.pk_hr_user},
+			#{ope.cratetime},
+			#{note}
+		)	
+	</insert>
+	<!-- 查询满足条件的用户个数 -->
+	<select id="queryConditionCount"  resultType="int">
+		SELECT
+			count(hr_user.id)
+		FROM
+			hr_user hr_user
+		WHERE
+			1 = 1
+		<if test="obj.name !=null and obj.name != ''">
+		AND hr_user.name LIKE CONCAT(#{obj.name}, '%')
+		</if>
+		<if test="obj.account !=null and obj.account != ''">
+		AND hr_user.account LIKE CONCAT(#{obj.account}, '%')
+		</if>
+		<if test="obj.mobile != null and obj.mobile != ''">
+		AND hr_user.mobile LIKE CONCAT(#{obj.mobile}, '%')
+		</if>
+		<if test="obj.email != null and obj.email != ''">
+		AND hr_user.email LIKE CONCAT(#{obj.email}, '%')
+		</if>
+		<if test="obj.islocked != null and obj.islocked != ''">
+		AND hr_user.islocked =#{obj.islocked}
+		</if>
+		<if  test="obj.starttime != null and obj.starttime != ''">
+	 <![CDATA[  AND hr_user.cratetime >= #{obj.starttime} ]]> 
+		</if>
+		<if  test="obj.endtime != null and obj.endtime != ''">
+	 <![CDATA[	AND hr_user.cratetime <= #{obj.endtime}  ]]> 
+		</if>
+		<include refid="conditionGroupOrg"></include>
+		AND hr_user.dr = 0
+	</select>
+	<!-- 查询条件的用户信息 -->
+	<select id="queryDomainList" resultMap="userDomain">
+		SELECT
+			hr_user.id as id,
+			hr_user.name as name,
+			hr_user.account as account,
+			hr_user.mobile as mobile,
+			hr_user.email as email,
+			hr_user.islocked as islocked,
+			hr_user.cratetime as createtime,
+			hr_user.pk_hr_group as pk_hr_group,
+			hr_user.pk_hr_org as pk_hr_org
+		FROM
+			hr_user hr_user JOIN (SELECT id from hr_user LIMIT #{startPage},#{pageSize}) page
+		ON
+			hr_user.id = page.id
+		WHERE
+			1 = 1
+		<if test="obj.name !=null and obj.name != ''">
+		AND hr_user.name LIKE CONCAT(#{obj.name}, '%')
+		</if>
+		<if test="obj.account !=null and obj.account != ''">
+		AND hr_user.account LIKE CONCAT(#{obj.account}, '%')
+		</if>
+		<if test="obj.mobile != null and obj.mobile != ''">
+		AND hr_user.mobile LIKE CONCAT(#{obj.mobile}, '%')
+		</if>
+		<if test="obj.email != null and obj.email != ''">
+		AND hr_user.email LIKE CONCAT(#{obj.email}, '%')
+		</if>
+		<if test="obj.islocked != null and obj.islocked != ''">
+		AND hr_user.islocked =#{obj.islocked}
+		</if>
+		<if  test="obj.starttime != null and obj.starttime != ''">
+	 <![CDATA[  AND hr_user.cratetime >= #{obj.starttime} ]]> 
+		</if>
+		<if  test="obj.endtime != null and obj.endtime != ''">
+	 <![CDATA[	AND hr_user.cratetime <= #{obj.endtime}  ]]> 
+		</if>
+		<include refid="conditionGroupOrg"></include>
+		AND hr_user.dr = 0
+	</select>
+	
+	<!-- 条件集团组织信息 -->
+	<sql id="conditionGroupOrg">
+		<choose>
+			<when test="obj.groups !=null and obj.groups.size > 0">
+				  AND (hr_user.pk_hr_group IN
+				 <foreach collection="obj.groups" index="index" item="item" open="(" separator="," close=")">
+ 					#{item}       
+				 </foreach> 
+				  OR hr_user.pk_hr_group is null)
+				<choose>
+					<when test="obj.orgs != null and obj.orgs.size > 0">
+					AND (hr_user.pk_hr_org IN
+						 <foreach collection="obj.orgs" index="index" item="item" open="(" separator="," close=")">
+ 								#{item}       
+						</foreach> 
+					OR hr_user.pk_hr_org is null)
+					</when>
+					<otherwise>
+				    AND hr_user.pk_hr_org = -1
+					</otherwise>
+				</choose>
+			</when>
+			<otherwise>
+				  AND hr_user.pk_hr_group = -1
+			</otherwise>
+		</choose>
+	</sql>
+</mapper>
