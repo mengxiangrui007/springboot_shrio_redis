@@ -1,0 +1,3 @@
+server:  #bootStrap configue
+    port: 8080
+    context-path: /

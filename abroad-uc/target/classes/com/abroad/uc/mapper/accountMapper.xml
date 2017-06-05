@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.abroad.uc.dao.IUserMapper">
+	<resultMap type="com.abroad.uc.domain.User" id="userDomain">
+		<result property="id" column="id" />
+		<result property="code" column="code" />
+	    <result property="account" column="account" />
+	    <result property="password" column="password"/>
+		<result property="name" column="name" />
+		<result property="islocked" column="islocked" />
+		<result property="salt" column="salt" />
+		<result property="groupId" column="pk_hr_group" />
+		<result property="orgId" column="pk_hr_org" />
+	</resultMap>
+	
+	<!-- 查询登录用户 -->
+	<select id="login" resultMap="userDomain">
+		select 
+			id,
+			code,
+			account,
+			password,
+			name,
+			islocked,
+			salt,
+			pk_hr_group,
+			pk_hr_org
+		from 
+			hr_user
+		where
+			account = #{username}
+	</select>
+	<!-- 添加用户 -->
+	<insert id="insert">
+		insert into hr_user(
+			id,
+			code,
+			account,
+			name,
+			mobile,
+			email,
+			islocked,
+			salt,
+			password,
+			pk_hr_userdetail,
+			pk_hr_group,
+			pk_hr_org,
+			pk_hr_user,
+			cratetime,
+			note
+		) 
+			values
+		(
+			#{id},
+			#{code},
+			#{account},
+			#{name},
+			#{mobile},
+			#{email},
+			#{islocked},
+			#{salt},
+			#{password},
+			#{pk_hr_userdetail},
+			#{pk_hr_group},
+			#{pk_hr_org},
+			#{ope.pk_hr_user},
+			#{ope.cratetime},
+			#{note}
+		)	
+	</insert>
+	
+
+	
+</mapper>

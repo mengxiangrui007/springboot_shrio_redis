@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.abroad.uc.dao.IRoleMapper">
+	<resultMap type="com.abroad.uc.domain.Role" id="roleDomain">
+		<result property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="type" column="type"/>
+		<result property="groupId" column="groupId" />
+		<result property="orgId" column="orgId" />
+	</resultMap>
+	<!-- 查询角色根据用户ID -->
+	<select id="queryRoleListByUserId" resultMap="roleDomain">
+		SELECT
+			id,
+			name,
+			code,
+			type,
+			pk_hr_group groupId,
+			pk_hr_org orgId
+		FROM
+			hr_role
+		WHERE
+			id IN (
+				SELECT
+					hr_user_role.pk_hr_role
+				FROM
+					hr_user_role hr_user_role
+				WHERE
+					hr_user_role.pk_hr_user = #{userId}
+			)
+	</select>
+</mapper>

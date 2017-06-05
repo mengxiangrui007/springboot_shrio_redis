@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.abroad.hr.dao.IUserLinkDao">
+
+	<resultMap type="com.abroad.hr.domain.UserLink" id="userLink">
+		<result property="id" column="id" />	
+		<result property="userId" column="user_id" />	
+		<result property="telephone" column="telephone" />	
+		<result property="email" column="email" />	
+		<result property="emailBackup" column="email_backup" />	
+		<result property="qq" column="qq" />	
+		<result property="wechat" column="wechat" />	
+		<result property="phone1" column="phone1" />	
+		<result property="phone2" column="phone2" />	
+		<result property="fax" column="fax" />	
+	</resultMap>
+	
+	<sql id="insertKey">
+		<trim suffixOverrides=",">
+				id,
+			<if test="userId > 0">
+				user_id,
+			</if>
+			<if test='null != telephone and !telephone.equals("")'>
+				telephone,
+			</if>
+			<if test='null != email and !email.equals("")'>
+				email,
+			</if>
+			<if test='null != emailBackup and !emailBackup.equals("")'>
+				email_backup,
+			</if>
+			<if test='null != qq and !qq.equals("")'>
+				qq,
+			</if>
+			<if test='null != wechat and !wechat.equals("")'>
+				wechat,
+			</if>
+			<if test='null != phone1 and !phone1.equals("")'>
+				phone1,
+			</if>
+			<if test='null != phone2 and !phone2.equals("")'>
+				phone2,
+			</if>
+			<if test='null != fax and !fax.equals("")'>
+				fax
+			</if>
+			
+		</trim>
+	</sql>
+	<sql id="insertValue">
+		<trim suffixOverrides=",">
+				#{id},
+			<if test="userId > 0">
+				#{userId},
+			</if>
+			<if test='null != telephone and !telephone.equals("")'>
+				#{telephone},
+			</if>
+			<if test='null != email and !email.equals("")'>
+				#{email},
+			</if>
+			<if test='null != emailBackup and !emailBackup.equals("")'>
+				#{emailBackup},
+			</if>
+			<if test='null != qq and !qq.equals("")'>
+				#{qq},
+			</if>
+			<if test='null != wechat and !wechat.equals("")'>
+				#{wechat},
+			</if>
+			<if test='null != phone1 and !phone1.equals("")'>
+				#{phone1},
+			</if>
+			<if test='null != phone2 and !phone2.equals("")'>
+				#{phone2},
+			</if>
+			<if test='null != fax and !fax.equals("")'>
+				#{fax}
+			</if>
+		</trim>
+	</sql>
+	
+<!-- 	添加用户联系信息 -->
+	<insert id="insert" keyProperty="id" useGeneratedKeys="true">
+		insert into user_link (<include refid="insertKey"/>) values (<include refid="insertValue"/>)
+	</insert>
+	
+	<select id="findUserLink" resultMap="userLink">
+		select * from user_link where user_id = #{userId}
+	</select>
+	
+<!-- 	根据用户id修改用户联系信息 -->
+	<update id="update">
+		update user_link 
+		<set>
+			<trim suffixOverrides=",">
+				<if test='null != telephone and !telephone.equals("")'>
+					telephone = #{telephone},
+				</if>
+				<if test='null != email and !email.equals("")'>
+					email = #{email},
+				</if>
+				<if test='null != emailBackup and !emailBackup.equals("")'>
+					email_backup = #{emailBackup},
+				</if>
+				<if test='null != qq and !qq.equals("")'>
+					qq = #{qq},
+				</if>
+				<if test='null != wechat and !wechat.equals("")'>
+					wechat = #{wechat},
+				</if>
+				<if test='null != phone1 and !phone1.equals("")'>
+					phone1 = #{phone1},
+				</if>
+				<if test='null != phone2 and !phone2.equals("")'>
+					phone2 = #{phone2},
+				</if>
+				<if test='null != fax and !fax.equals("")'>
+					fax = #{fax}
+				</if>
+			</trim>
+		</set>
+		where user_id = #{userId}
+	</update>
+	
+<!-- 	根据用户id删除用户联系信息 -->
+	<delete id="deleteUserLink">
+		delete from user_link where user_id = #{userId}
+	</delete>
+</mapper>

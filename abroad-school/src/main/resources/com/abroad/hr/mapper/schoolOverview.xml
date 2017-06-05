@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.abroad.school.dao.ISchoolOverviewDao">
+
+	<resultMap type="com.abroad.school.domain.SchoolOverview" id="schoolOverview">
+		<result property="id" column="id" />	
+		<result property="schoolId" column="school_id" />	
+		<result property="history" column="history" />	
+		<result property="schoolTypeCode" column="school_type_code" />	
+		<result property="specialty" column="specialty" />	
+		<result property="enrollRate" column="enroll_rate" />	
+		<result property="sat" column="sat" />	
+		<result property="toefl" column="toefl" />	
+		<result property="stay" column="stay" />	
+		<result property="des" column="des" />	
+	</resultMap>
+   
+   	<sql id="insertKey">
+   		<trim suffixOverrides=",">
+   				id,
+   			<if test="null != schoolId">
+   				school_id,
+   			</if>
+   			<if test='null != history and !history.equals("")'>
+   				history,
+   			</if>
+   			<if test="null != schoolTypeCode">
+   				school_type_code,
+   			</if>
+   			<if test='null != specialty and !specialty.equals("")'>
+   				specialty,
+   			</if>
+   			<if test="enrollRate > 0">
+   				enroll_rate,
+   			</if>
+   			<if test="sat > 0">
+   				sat,
+   			</if>
+   			<if test="toefl > 0">
+   				toefl,
+   			</if>
+   			<if test='null != stay and !stay.equals("")'>
+   				stay,
+   			</if>
+   			<if test='null != des and !des.equals("")'>
+   				des
+   			</if>
+   		</trim>
+   	</sql>
+   	<sql id="insertValue">
+   		<trim suffixOverrides=",">
+   				#{id},
+   			<if test="null != schoolId">
+   				#{schoolId},
+   			</if>
+   			<if test='null != history and !history.equals("")'>
+   				#{history},
+   			</if>
+   			<if test="null != schoolTypeCode">
+   				#{schoolTypeCode},
+   			</if>
+   			<if test='null != specialty and !specialty.equals("")'>
+   				#{specialty},
+   			</if>
+   			<if test="enrollRate > 0">
+   				#{enrollRate},
+   			</if>
+   			<if test="sat > 0">
+   				#{sat},
+   			</if>
+   			<if test="toefl > 0">
+   				#{toefl},
+   			</if>
+   			<if test='null != stay and !stay.equals("")'>
+   				#{stay},
+   			</if>
+   			<if test='null != des and !des.equals("")'>
+   				#{des}
+   			</if>
+   		</trim>
+   	</sql>
+   	
+	<sql id="findSql">
+		select * from school_overview
+	</sql>
+	
+<!-- 	根据学校id查询学校概述 -->
+	<select id="findSchoolOverview" resultMap="schoolOverview">
+		<include refid="findSql"/>
+		where school_id = #{schoolId}
+	</select>
+	
+<!-- 	添加学校概述 -->
+	<insert id="insert" keyProperty="id" useGeneratedKeys="true">
+		insert into school_overview (<include refid="insertKey"/>) values (<include refid="insertValue"/>)
+	</insert>
+	
+<!-- 	根据学校id修改学校概述 -->
+	<update id="update">
+		update school_overview 
+		<set>
+			<trim suffixOverrides=",">
+	   			<if test='null != history and !history.equals("")'>
+	   				history = #{history},
+	   			</if>
+	   			<if test="null != schoolTypeCode">
+	   				school_type_code = #{schoolTypeCode},
+	   			</if>
+	   			<if test='null != specialty and !specialty.equals("")'>
+	   				specialty = #{specialty},
+	   			</if>
+	   			<if test="enrollRate > 0">
+	   				enroll_rate = #{enrollRate},
+	   			</if>
+	   			<if test="sat > 0">
+	   				sat = #{sat},
+	   			</if>
+	   			<if test="toefl > 0">
+	   				toefl = #{toefl},
+	   			</if>
+	   			<if test='null != stay and !stay.equals("")'>
+	   				stay = #{stay},
+	   			</if>
+	   			<if test='null != des and !des.equals("")'>
+	   				des = #{des}
+	   			</if>
+   			</trim>
+		</set>
+		where school_id = #{schoolId}
+	</update>
+	
+<!-- 	根据学校id删除学校概述 -->
+	<delete id="deleteSchoolOverview">
+		delete from school_overview where school_id = #{schoolId}
+	</delete>
+</mapper>
